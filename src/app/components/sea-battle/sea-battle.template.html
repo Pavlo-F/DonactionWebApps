@@ -1,0 +1,31 @@
+<div class="sea-battle">
+    <div>
+        <div class="d-flex">
+            <div *ngFor="let header of battleHeader">
+                <div class="abc">
+                    <div class="unit-container">{{header}}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex">
+            <div>
+                <div *ngFor="let row of battleField; let i = index">
+                    <div class="abc">
+                        <div class="unit-container">{{i + 1}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table">
+                <tr *ngFor="let row of battleField; track">
+                    <td class="cell" *ngFor="let cell of row">
+                        <div class="unit-container cell__unit">{{cell}}</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+</div>
