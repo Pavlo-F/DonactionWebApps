@@ -20,7 +20,13 @@
             <table class="table">
                 <tr *ngFor="let row of battleField; track">
                     <td class="cell" *ngFor="let cell of row">
-                        <div class="unit-container cell__unit">{{cell}}</div>
+                        <div class="unit-container cell__unit"
+                            [ngClass]="{'cell__unit_no-back': cell.health <= 0}"
+                            (click)="onClickCell(cell)">
+                            <span *ngIf="cell.health > 0">
+                                {{cell.health}}
+                            </span>
+                        </div>
                     </td>
                 </tr>
             </table>
