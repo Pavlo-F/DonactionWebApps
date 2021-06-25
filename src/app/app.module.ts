@@ -7,6 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BombComponent,
   IncreaseTimeComponent, 
+  ReduceTimeComponent, 
   SeaBattleComponent, 
   UnitContainerComponent } from './components';
 import { MainPageComponent } from './pages';
@@ -19,6 +20,7 @@ import { MainPageComponent } from './pages';
     IncreaseTimeComponent,
     MainPageComponent,
     UnitContainerComponent,
+    ReduceTimeComponent,
   ],
   imports: [
     BrowserModule,

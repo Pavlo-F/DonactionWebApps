@@ -1,4 +1,5 @@
 <div class="unit">
     <bomb *ngIf="unitType === 'Bomb'" [health]="unitValue"></bomb>
     <increase-time *ngIf="unitType === 'IncreaseTime'" [unitValue]="unitValue"></increase-time>
+    <reduce-time *ngIf="unitType === 'ReduceTime'" [unitValue]="unitValue"></reduce-time>
 </div>

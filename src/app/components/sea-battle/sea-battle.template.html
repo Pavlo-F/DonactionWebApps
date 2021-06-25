@@ -1,8 +1,4 @@
 <div class="sea-battle">
-    <input type="text"
-    >
-    <button (click)="onDamage('б3')">Send</button>
-
     <div>
         <div class="d-flex">
             <div *ngFor="let header of battleHeader">
@@ -27,9 +23,6 @@
                         <div class="unit-container cell__unit"
                             [ngClass]="{'cell__unit_no-back': cell.health <= 0}"
                             (click)="onClickCell(cell)">
-                            <span *ngIf="cell.health > 0">
-                                {{cell.health}}
-                            </span>
                             <unit-container *ngIf="cell.health <= 0"
                                 [unitType]="cell.type" 
                                 [unitValue]="cell.value">
