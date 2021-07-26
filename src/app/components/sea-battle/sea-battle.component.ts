@@ -1,9 +1,11 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { webSocket, WebSocketSubject } from "rxjs/webSocket";
 import { Unit } from '../units/models';
 import { UniteTypes } from '../constants';
+import { MatDialog } from '@angular/material/dialog';
+import { ChooseUnitDialog } from '../dialogs/choose-unit-dialog/choose-unit-dialog.component';
 
 @Component({
     selector: 'sea-battle',
@@ -12,7 +14,9 @@ import { UniteTypes } from '../constants';
 })
 
 export class SeaBattleComponent implements AfterViewInit {
-    public battleField: Array<Array<Unit>> = new Array<Array<Unit>>();
+    @Input() isEditMode: boolean = false;
+    @Input() backgroundImage: string = '';
+    @Input() battleField: Array<Array<Unit>> = new Array<Array<Unit>>();
 
     public battleRows: number = 7;
     public battleCols: number = 7;
@@ -28,34 +32,42 @@ export class SeaBattleComponent implements AfterViewInit {
     private donatpaySocket: WebSocketSubject<any> = webSocket('');
     private uid: number = 0;
 
-    constructor(private httpClient: HttpClient) {
+    
+
+    constructor(
+        private readonly httpClient: HttpClient,
+        private readonly dialog: MatDialog) {
         this.headerChars = this.arrRu;
 
         for(let i = 0; i < this.battleCols; i++) {
             this.battleHeader.push(this.headerChars[i]);
         }
 
-        let count = 1;
-        for(let i = 0; i < this.battleRows; i++) {
-            this.battleField[i] = [];
+        if (this.isEditMode) {
 
-            for(let j = 0; j < this.battleCols; j++) {
-                const rand = Math.random();
-                const unit = new Unit('', 50, 30);
-
-                if (rand > 0.5 && rand <= 0.8) {
-                    unit.type = UniteTypes.ReduceTime;
-                } else if (rand > 0.8) {
-                    unit.type = UniteTypes.IncreaseTime;
-                }
-
-                this.battleField[i][j] = unit;
-                count++;
-            }
+        } else {
+            // let count = 1;
+            // for(let i = 0; i < this.battleRows; i++) {
+            //     this.battleField[i] = [];
+    
+            //     for(let j = 0; j < this.battleCols; j++) {
+            //         const rand = Math.random();
+            //         const unit = new Unit(UniteTypes.Text, 50, 'текст');
+    
+            //         if (rand > 0.5 && rand <= 0.8) {
+            //             unit.type = UniteTypes.ReduceTime;
+            //         } else if (rand > 0.8) {
+            //             unit.type = UniteTypes.IncreaseTime;
+            //         }
+    
+            //         this.battleField[i][j] = unit;
+            //         count++;
+            //     }
+            // }
+    
+            // TODO вызывать только если заранее известен адрес, например, из localstorage
+            //this.getSoketTokensFromWidget("https://widget.donatepay.ru/alert-box/widget/baac68e8774a666758dec941315467fb8a3152d8fb46a909e5a6ab981889dfb9")
         }
-
-        // TODO вызывать только если заранее известен адрес, например, из localstorage
-        this.getSoketTokensFromWidget("https://widget.donatepay.ru/alert-box/widget/baac68e8774a666758dec941315467fb8a3152d8fb46a909e5a6ab981889dfb9")
     }
 
     ngAfterViewInit(): void {}
@@ -95,8 +107,24 @@ export class SeaBattleComponent implements AfterViewInit {
         }
     }
 
-    private getSoketTokensFromWidget(widgetUrl: string) {
+    openChooseUnitDialog(unit: Unit) {
+        const dialogRef = this.dialog.open(ChooseUnitDialog, {
+            width: '510px',
+            data: {
+                unit: { ...unit },
+            },
+        });
 
+        dialogRef.afterClosed().subscribe((result: Unit) => {
+            if (result) {
+                unit.health = result.health;
+                unit.type = result.type;
+                unit.value = result.value;
+            }
+        });
+    }
+
+    private getSoketTokensFromWidget(widgetUrl: string) {
         const splitedUrl = widgetUrl.split('/');
         const widgetToken = splitedUrl[splitedUrl.length - 1];
 

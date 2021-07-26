@@ -1,0 +1,30 @@
+<div class="sea-battle-settings">
+    <h2>Настройки виджета</h2>
+
+    <sea-battle 
+        [isEditMode]="true" 
+        [backgroundImage]="widgetSettings.backgroundImage"
+        [battleField]="widgetSettings.fieldData">
+    </sea-battle>
+
+    <!-- <button mat-raised-button color="primary" (click)="fillRandom()">
+        Сгенерировать поле
+    </button> -->
+
+    <div class="d-flex buttons-width">
+        <div class="file-uploader">
+            <span>Картинка заднего плана</span>
+            <file-upload accept="image/png, image/jpeg" (load)="backgroundLoaded($event)"></file-upload>
+        </div>
+        <div class="resort-button">
+            <button mat-raised-button color="primary" (click)="resort()">
+                Перемешать
+            </button>
+        </div>
+        <div class="resort-button">
+            <button mat-raised-button color="primary" (click)="saveSettings()" [disabled]="saveButtonDisabled">
+                Сохранить
+            </button>
+        </div>
+    </div>
+</div>

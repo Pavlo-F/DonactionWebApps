@@ -7,15 +7,12 @@ import { AfterViewInit, Component, Input } from '@angular/core';
 })
 
 export class UnitContainerComponent implements AfterViewInit {
-    @Input() unitType: string;
-    @Input() health: number;
-    @Input() unitValue: number;
+    @Input() unitType: string = '';
+    @Input() health: number = -1;
+    @Input() unitValue: any = {};
+    @Input() isEdit: boolean = false;
 
-    constructor() {
-        this.unitType = ''; 
-        this.health = -1;
-        this.unitValue = -1;
-    }
+    constructor() {}
 
     ngAfterViewInit(): void {}
 }

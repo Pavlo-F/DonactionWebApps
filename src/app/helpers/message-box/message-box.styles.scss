@@ -1,0 +1,13 @@
+.message-box {
+    max-width: 80vw !important;
+    max-height: 80vw !important;
+    overflow-wrap: break-word;
+
+    &__text {
+        font-size: 30px;
+    }
+
+    .action-block {
+        justify-content: end;
+    }
+}

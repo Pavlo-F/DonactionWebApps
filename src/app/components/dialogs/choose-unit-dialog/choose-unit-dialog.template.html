@@ -1,0 +1,60 @@
+<div class="choose-unit-dialog">
+    <h2 mat-dialog-title>Выбор</h2>
+    <mat-dialog-content>
+        <div class="d-flex all-items">
+            <div class="item-container" (click)="chooseItem('IncreaseTime')">
+                <span>Увеличить время</span>
+                <unit-container
+                    [ngClass]="{'selected-item': unit.type === 'IncreaseTime'}"
+                    [unitType]="'IncreaseTime'" 
+                    [unitValue]="unit.value"
+                    [isEdit]="true">
+                </unit-container>
+            </div>
+
+            <div class="item-container" (click)="chooseItem('ReduceTime')">
+                <span>Уменьшить время</span>
+                <unit-container
+                    [ngClass]="{'selected-item': unit.type === 'ReduceTime'}"
+                    [unitType]="'ReduceTime'" 
+                    [unitValue]="unit.value"
+                    [isEdit]="true">
+                </unit-container>
+            </div>
+
+            <div class="item-container" (click)="chooseItem('Text')">
+                <span>Любой текст</span>
+                <unit-container
+                    [ngClass]="{'selected-item': unit.type === 'Text'}"
+                    [unitType]="'Text'" 
+                    [unitValue]="'Текст'"
+                    [isEdit]="true">
+                </unit-container>
+            </div>
+
+            <div class="item-container" (click)="chooseItem('')">
+                <span>Пустой элемент</span>
+                <unit-container
+                    [ngClass]="{'selected-item': unit.type === ''}"
+                    [unitType]="''"
+                    [unitValue]="''"
+                    [isEdit]="true">
+                </unit-container>
+            </div>
+        </div>
+
+        <div *ngIf="unit.type === 'Text'">
+            <span>Вставьте в текст <b>(username)</b> и оно заменится на имя задонатившего при показе сообщения</span>
+            <textarea
+                matInput
+                [(ngModel)]="unit.value"
+                rows="3"
+                type="text">
+          </textarea>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions class="actions-block">
+        <button mat-raised-button color="primary" (click)="confirmChoose()" cdkFocusInitial>Ok</button>
+        <button mat-raised-button [mat-dialog-close]="" cdkFocusInitial>Отмена</button>
+    </mat-dialog-actions>
+</div>

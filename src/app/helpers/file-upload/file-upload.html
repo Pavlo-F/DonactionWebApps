@@ -1,0 +1,5 @@
+<div app-dnd (fileDropped)="onFileDropped($event)">
+  <input type="file" class="file-upload" #fileDropRef 
+  id="fileDropRef" [disabled]="disabled" (change)="fileBrowseHandler($event)" 
+  [accept]="accept"/>
+</div>

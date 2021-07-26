@@ -17,7 +17,7 @@
                 </div>
             </div>
 
-            <table class="table">
+            <table class="table" *ngIf="!isEditMode">
                 <tr *ngFor="let row of battleField; track">
                     <td class="cell" *ngFor="let cell of row">
                         <div class="unit-container cell__unit"
@@ -31,6 +31,26 @@
                     </td>
                 </tr>
             </table>
+
+            <div>
+                <table class="table" [style.background-image]="'url(' + backgroundImage + ')'" *ngIf="isEditMode">
+                    <tr *ngFor="let row of battleField; track">
+                        <td class="cell" *ngFor="let cell of row">
+                            <div class="unit-container cell__unit_no-back">
+                                <button class="unit-container__settings-button" (click)="openChooseUnitDialog(cell)">
+                                    <img src="/assets/icons/settings.svg" title="Настройка">
+                                </button>
+                                <unit-container
+                                    [unitType]="cell.type" 
+                                    [unitValue]="cell.value"
+                                    [isEdit]="isEditMode">
+                                </unit-container>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
         </div>
 
     </div>

@@ -1,4 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+    font-family: sans-serif;
+}
+
 .d-flex {
     display: flex;
+}
+
+.justify-content-between {
+    justify-content: space-between;
 }
