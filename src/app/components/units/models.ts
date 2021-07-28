@@ -11,15 +11,9 @@ export class Unit {
 }
 
 export class WidgetSettings {
-    public fieldData: Array<Array<Unit>>;
-    public backgroundImage: string;
-    public columns: number;
-    public rows: number;
-
-    constructor() {
-        this.fieldData = new  Array<Array<Unit>>();
-        this.backgroundImage = '/assets/defaultFieldBack.png';
-        this.columns = 7;
-        this.rows = 7;
-    }
+    public fieldData: Array<Array<Unit>> = new Array<Array<Unit>>();
+    public backgroundImage: string = '/assets/defaultFieldBack.png';;
+    public columns: number = 7;
+    public rows: number = 7;
+    public donatePayWidgerUrl: string = '';
 }

@@ -1,11 +1,11 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
 import { webSocket, WebSocketSubject } from "rxjs/webSocket";
 import { Unit } from '../units/models';
-import { UniteTypes } from '../constants';
 import { MatDialog } from '@angular/material/dialog';
 import { ChooseUnitDialog } from '../dialogs/choose-unit-dialog/choose-unit-dialog.component';
+import { SeaBattleService } from '../../services/sea-battle.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'sea-battle',
@@ -29,48 +29,30 @@ export class SeaBattleComponent implements AfterViewInit {
     private arrRu = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ж', 'З', 'И', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Э'];
     private headerChars: string[];
 
-    private donatpaySocket: WebSocketSubject<any> = webSocket('');
+    private donatpaySocket !: WebSocketSubject<any>;
     private uid: number = 0;
-
-    
+    private widgetCode: string = '';
 
     constructor(
         private readonly httpClient: HttpClient,
+        private route: ActivatedRoute,
+        private seaBattleService: SeaBattleService,
         private readonly dialog: MatDialog) {
         this.headerChars = this.arrRu;
+        this.widgetCode = this.route.snapshot.queryParams.widgetCode;
 
         for(let i = 0; i < this.battleCols; i++) {
             this.battleHeader.push(this.headerChars[i]);
         }
+    }
 
+    ngAfterViewInit(): void {
         if (this.isEditMode) {
 
         } else {
-            // let count = 1;
-            // for(let i = 0; i < this.battleRows; i++) {
-            //     this.battleField[i] = [];
-    
-            //     for(let j = 0; j < this.battleCols; j++) {
-            //         const rand = Math.random();
-            //         const unit = new Unit(UniteTypes.Text, 50, 'текст');
-    
-            //         if (rand > 0.5 && rand <= 0.8) {
-            //             unit.type = UniteTypes.ReduceTime;
-            //         } else if (rand > 0.8) {
-            //             unit.type = UniteTypes.IncreaseTime;
-            //         }
-    
-            //         this.battleField[i][j] = unit;
-            //         count++;
-            //     }
-            // }
-    
-            // TODO вызывать только если заранее известен адрес, например, из localstorage
-            //this.getSoketTokensFromWidget("https://widget.donatepay.ru/alert-box/widget/baac68e8774a666758dec941315467fb8a3152d8fb46a909e5a6ab981889dfb9")
+            this.loadSettings();
         }
     }
-
-    ngAfterViewInit(): void {}
 
     onClickCell(cell: Unit) {
         if (cell.health > 0) {
@@ -128,7 +110,7 @@ export class SeaBattleComponent implements AfterViewInit {
         const splitedUrl = widgetUrl.split('/');
         const widgetToken = splitedUrl[splitedUrl.length - 1];
 
-        this.httpClient.post<DonatePaySocketTokens>(`${environment.apiUrl}/api/donatepay/GetTokens`, { widgetToken })
+        this.httpClient.post<DonatePaySocketTokens>('/api/donatepay/GetTokens', { widgetToken })
         .subscribe((response) => {
             console.log(response);
 
@@ -207,6 +189,25 @@ export class SeaBattleComponent implements AfterViewInit {
         } catch (error) {
             console.log(error);
         }
+    }
+
+    private loadSettings() {
+        this.seaBattleService.getSettings(this.widgetCode).subscribe((data) => {
+            this.battleField = data.fieldData;
+            this.battleCols = data.columns;
+            this.battleRows = data.rows;
+            this.backgroundImage = data.backgroundImage;
+
+            this.battleHeader = [''];
+            for(let i = 0; i < data.columns; i++) {
+                this.battleHeader.push(this.headerChars[i]);
+            }
+
+            this.getSoketTokensFromWidget(data.donatePayWidgerUrl);
+
+        }, (error) => {
+            console.log(error);
+        });
     }
 }
 

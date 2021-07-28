@@ -19,6 +19,7 @@ export class ChooseUnitDialog {
         @Inject(MAT_DIALOG_DATA) public data: ChooseUnitDialogData
     ) {
         this.unit = data.unit;
+        this.unit.health = 50;
     }
 
     confirmChoose() {

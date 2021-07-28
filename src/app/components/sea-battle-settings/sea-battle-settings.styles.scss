@@ -9,4 +9,24 @@
         align-items: flex-end;
         margin-left: 10px;
     }
+
+    .donate-settings {
+        margin: 0 0 0 30px;
+
+        &__label {
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        &__ref {
+            display: block;
+            font-size: 12px;
+            line-height: 0;
+        } 
+
+        #donatePayWidgerUrl {
+            margin: 0 0 10px 10px;
+            width: 400px;
+        }
+    }
 }

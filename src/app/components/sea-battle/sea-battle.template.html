@@ -17,7 +17,7 @@
                 </div>
             </div>
 
-            <table class="table" *ngIf="!isEditMode">
+            <table class="table" [style.background-image]="'url(' + backgroundImage + ')'" *ngIf="!isEditMode">
                 <tr *ngFor="let row of battleField; track">
                     <td class="cell" *ngFor="let cell of row">
                         <div class="unit-container cell__unit"

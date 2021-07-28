@@ -1,11 +1,19 @@
 <div class="sea-battle-settings">
     <h2>Настройки виджета</h2>
 
-    <sea-battle 
-        [isEditMode]="true" 
-        [backgroundImage]="widgetSettings.backgroundImage"
-        [battleField]="widgetSettings.fieldData">
-    </sea-battle>
+    <div class="d-flex">
+        <sea-battle 
+            [isEditMode]="true" 
+            [backgroundImage]="widgetSettings.backgroundImage"
+            [battleField]="widgetSettings.fieldData">
+        </sea-battle>
+        <div class="donate-settings">
+            <div class="donate-settings__label">Настройка интеграции с донатами</div>
+            <label for="donatePayWidgerUrl">Ссылка на виджет DonatePay:</label>
+            <input id="donatePayWidgerUrl" type="text" [(ngModel)]="widgetSettings.donatePayWidgerUrl">
+            <a class="donate-settings__ref" href="https://donatepay.ru/donation/notifications" target="_blank">Находится по этой ссылке https://donatepay.ru/donation/notifications</a>
+        </div>
+    </div>
 
     <!-- <button mat-raised-button color="primary" (click)="fillRandom()">
         Сгенерировать поле

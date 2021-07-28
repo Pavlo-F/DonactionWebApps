@@ -1,7 +1,4 @@
 import { AfterViewInit, Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
-import { webSocket, WebSocketSubject } from "rxjs/webSocket";
 import { Unit, WidgetSettings } from '../units/models';
 import { UniteTypes } from '../constants';
 import { ActivatedRoute } from '@angular/router';
@@ -22,26 +19,25 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
     private widgetCode: string = '';
 
     constructor(
-        private httpClient: HttpClient, 
         private route: ActivatedRoute,
         private messageBox: MatDialog,
         private seaBattleService: SeaBattleService) {
-        const widgetCode = this.route.snapshot.paramMap.get('widgetCode');
-        this.widgetCode = widgetCode ? widgetCode : '';
+        this.widgetCode = this.route.snapshot.queryParams.widgetCode;
     }
 
     ngAfterViewInit(): void {
-        setTimeout(() => {
-            if (!this.widgetSettings.fieldData || this.widgetSettings.fieldData.length < 1) {
-                this.fillRandom();
-            }
-        }, 1000);
-
+        this.loadSettings();
     }
 
     backgroundLoaded(file: any) {
-        this.widgetSettings.backgroundImage = URL.createObjectURL(file);
-        const imageFile = file;
+        this.readFile(file).then(
+            (data) => {
+                this.widgetSettings.backgroundImage = data
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
     }
 
     fillRandom() {
@@ -94,6 +90,30 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
                     withButtons: true,
                 },
             });
+        });
+    }
+
+    loadSettings() {
+        this.seaBattleService.getSettings(this.widgetCode).subscribe((data) => {
+            this.widgetSettings = data;
+
+            if (!data || data.fieldData.length < 1) {
+                this.fillRandom();
+            }
+        }, (error) => {
+            this.fillRandom();
+            console.log(error);
+        });
+    }
+
+    private readFile(data: Blob): Promise<string> {
+        const reader = new FileReader();
+
+        return new Promise((resolve) => {
+            reader.onloadend = () => {
+                resolve(reader.result as string);
+            };
+            reader.readAsDataURL(data);
         });
     }
 }

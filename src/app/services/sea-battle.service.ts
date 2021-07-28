@@ -9,12 +9,7 @@ export class SeaBattleService {
     constructor(private http: HttpClient) {}
 
     public saveSettings(widgetSettings: WidgetSettings, widgetCode: string) {
-        const params = {
-            widgetSettings: widgetSettings,
-            widgetCode: widgetCode,
-        };
-
-        return this.http.post('/api/SeaBattleWidget', { params: params });
+        return this.http.post(`/api/SeaBattleWidget?widgetCode=${widgetCode}`, widgetSettings);
     }
 
     public getSettings(widgetCode: string) {

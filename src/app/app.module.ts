@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -22,6 +22,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { FileUploadComponent } from './helpers/file-upload/file-upload';
 import { DndDirective } from './helpers/file-upload/dnd.directive';
 import { SanitizeUrlPipe } from './helpers/sanitize-url/sanitize-url.pipe';
+import { CustomHttpInterceptor } from './services/custom.interceptor';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,13 @@ import { SanitizeUrlPipe } from './helpers/sanitize-url/sanitize-url.pipe';
     MessageBoxDialog,
     ChooseUnitDialog,
   ],
-  providers: [],
+  providers: [
+    {
+        provide: HTTP_INTERCEPTORS,
+        useClass: CustomHttpInterceptor,
+        multi: true,
+    },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
