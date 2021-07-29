@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ChooseUnitDialog } from '../dialogs/choose-unit-dialog/choose-unit-dialog.component';
 import { SeaBattleService } from '../../services/sea-battle.service';
 import { ActivatedRoute } from '@angular/router';
+import { UniteTypes } from '../constants';
 
 @Component({
     selector: 'sea-battle',
@@ -60,7 +61,7 @@ export class SeaBattleComponent implements AfterViewInit {
         }
     }
 
-    onDamage(coords: string) {
+    onDamage(coords: string, userName: string) {
         const value = coords.toUpperCase();
 
         let char = 'а';
@@ -84,6 +85,9 @@ export class SeaBattleComponent implements AfterViewInit {
         if (this.battleRows > rowIndex && this.battleCols > colIndex) {
             const cell = this.battleField[rowIndex][colIndex];
             if (cell.health > 0) {
+                if (cell.type === UniteTypes.Text) {
+                    cell.value = (cell.value as string).replace('(username)', userName);
+                }
                 cell.health = cell.health - this.damage;
             }
         }
@@ -183,7 +187,7 @@ export class SeaBattleComponent implements AfterViewInit {
                 if (coordsMatch) {
                     coords = coordsMatch[1].replace(' ', '');
     
-                    this.onDamage(coords);
+                    this.onDamage(coords, userName);
                 }
             }
         } catch (error) {
