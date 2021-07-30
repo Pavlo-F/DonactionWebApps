@@ -21,12 +21,24 @@
         &__ref {
             display: block;
             font-size: 12px;
-            line-height: 0;
         } 
 
+        &__widget {
+            margin-top: 15px;
+
+            &_ref {
+                display: block;
+                font-size: 12px;
+            }
+        }
+
         #donatePayWidgerUrl {
-            margin: 0 0 10px 10px;
+            margin: 0 0 0 10px;
             width: 400px;
         }
+    }
+
+    .save-message {
+        color: rgb(139, 0, 0);
     }
 }

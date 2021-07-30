@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { webSocket, WebSocketSubject } from "rxjs/webSocket";
 import { Unit } from '../units/models';
@@ -18,6 +18,7 @@ export class SeaBattleComponent implements AfterViewInit {
     @Input() isEditMode: boolean = false;
     @Input() backgroundImage: string = '';
     @Input() battleField: Array<Array<Unit>> = new Array<Array<Unit>>();
+    @Output() onFieldChanged: EventEmitter<void> = new EventEmitter<void>();
 
     public battleRows: number = 7;
     public battleCols: number = 7;
@@ -106,6 +107,10 @@ export class SeaBattleComponent implements AfterViewInit {
                 unit.health = result.health;
                 unit.type = result.type;
                 unit.value = result.value;
+
+                if (this.onFieldChanged) {
+                    this.onFieldChanged.next();
+                }
             }
         });
     }

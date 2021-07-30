@@ -5,13 +5,52 @@
         <sea-battle 
             [isEditMode]="true" 
             [backgroundImage]="widgetSettings.backgroundImage"
-            [battleField]="widgetSettings.fieldData">
+            [battleField]="widgetSettings.fieldData"
+            (onFieldChanged)="onFieldChanged()">
         </sea-battle>
         <div class="donate-settings">
-            <div class="donate-settings__label">Настройка интеграции с донатами</div>
-            <label for="donatePayWidgerUrl">Ссылка на виджет DonatePay:</label>
-            <input id="donatePayWidgerUrl" type="text" [(ngModel)]="widgetSettings.donatePayWidgerUrl">
-            <a class="donate-settings__ref" href="https://donatepay.ru/donation/notifications" target="_blank">Находится по этой ссылке https://donatepay.ru/donation/notifications</a>
+            <div>
+                <div class="donate-settings__label">О виджете</div>
+                <div>
+                    <p>Виджет представляет собой подобию игры "Морской бой".</p>
+                    За каждой клеткой скрывается определенное действие.
+                    Это либо показ картинки, либо текст. Каждую клетку можно настроить.
+                    За донаты зрители могут открыть клетку и увидеть что выпало.
+                    <p>Например, увеличить или уменьшить время стрима, сделать роспись на стене в соц сети, получить мерч и т.д.</p>
+                    Также можно написать забавное сообщение и при этом подставится имя задонатившего.
+                </div>
+            </div>
+            <div>
+                <h4 class="donate-settings__label">Инструкция</h4>
+                <div>
+                    <ol>
+                        <li>Указать ссылку на виджет DonatePay, чтобы срабатывали донаты</li>
+                        <li>Настроить клетки</li>
+                        <li>Сохранить настройки</li>
+                        <li>Открыть <a [href]="widgetHref" target="_blank">виджет</a> на новой вкладке </li>
+                        <li>Отправить тестовый донат с сообщением: Хочу открыть клетку "Б4"</li>
+                        <li>В виджете должна открыться клетка "Б4"</li>
+                    </ol>
+
+                    <div>
+                        Сообщение может быть любым главное чтобы координаты клетки были заключены в кавычки " ".
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h4 class="donate-settings__label">Настройка интеграции с донатами</h4>
+                <div>Ссылка на виджет DonatePay:
+                    <input id="donatePayWidgerUrl" type="text" 
+                    [(ngModel)]="widgetSettings.donatePayWidgerUrl" 
+                    (ngModelChange)="onDonatePayWidgerUrlChange()">
+                    <a class="donate-settings__ref" href="https://donatepay.ru/donation/notifications" target="_blank">Находится по этой ссылке https://donatepay.ru/donation/notifications</a>
+                </div>
+    
+                <div class="donate-settings__widget">Ссылка на данный виджет:
+                    <a class="donate-settings__widget_ref" [href]="widgetHref" target="_blank">{{widgetHref}}</a>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -35,4 +74,6 @@
             </button>
         </div>
     </div>
+
+    <div class="save-message" *ngIf="showSaveMessage && !saveButtonDisabled">Сохраните изменения и обновите открытый виджет (OBS, браузер)</div>
 </div>

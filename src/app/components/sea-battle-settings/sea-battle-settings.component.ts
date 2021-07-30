@@ -14,15 +14,18 @@ import { MessageBoxDialog } from '../../helpers/message-box/message-box.componen
 
 export class SeaBattleSettingsComponent implements AfterViewInit {
     public widgetSettings: WidgetSettings = new WidgetSettings();
-    public saveButtonDisabled: boolean = false;
+    public saveButtonDisabled: boolean = true;
+    public showSaveMessage: boolean = false;
+    public widgetHref: string = '';
 
     private widgetCode: string = '';
-
+    
     constructor(
         private route: ActivatedRoute,
         private messageBox: MatDialog,
         private seaBattleService: SeaBattleService) {
         this.widgetCode = this.route.snapshot.queryParams.widgetCode;
+        this.widgetHref = window.location.href.replace('/settings?', '?');
     }
 
     ngAfterViewInit(): void {
@@ -33,6 +36,7 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
         this.readFile(file).then(
             (data) => {
                 this.widgetSettings.backgroundImage = data
+                this.showSaveMessage = true;
             },
             (error) => {
                 console.log(error);
@@ -72,14 +76,18 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
               field[i][jj] = tmp;
             }
         }
+
+        this.showSaveMessage = true;
     }
 
     saveSettings() {
         this.saveButtonDisabled = true;
         this.seaBattleService.saveSettings(this.widgetSettings, this.widgetCode).subscribe((data) => {
             this.saveButtonDisabled = false;
+            this.showSaveMessage = false;
         }, (error) => {
             this.saveButtonDisabled = false;
+            this.showSaveMessage = false;
             console.log(error);
 
             const ref = this.messageBox.open(MessageBoxDialog, {
@@ -100,10 +108,24 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
             if (!data || data.fieldData.length < 1) {
                 this.fillRandom();
             }
+
+            this.saveButtonDisabled = data && !data.donatePayWidgerUrl;
+
         }, (error) => {
             this.fillRandom();
             console.log(error);
         });
+    }
+
+    onDonatePayWidgerUrlChange() {
+         this.saveButtonDisabled = !this.widgetSettings.donatePayWidgerUrl 
+             || !this.widgetSettings.donatePayWidgerUrl.startsWith('https://');
+
+        this.showSaveMessage = true;
+    }
+
+    onFieldChanged() {
+        this.showSaveMessage = true;
     }
 
     private readFile(data: Blob): Promise<string> {
