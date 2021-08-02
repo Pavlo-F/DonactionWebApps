@@ -15,5 +15,5 @@ export class WidgetSettings {
     public backgroundImage: string = '/assets/defaultFieldBack.png';;
     public columns: number = 7;
     public rows: number = 7;
-    public donatePayWidgerUrl: string = '';
+    public donatePayWidgetUrl: string = '';
 }

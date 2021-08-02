@@ -212,7 +212,7 @@ export class SeaBattleComponent implements AfterViewInit {
                 this.battleHeader.push(this.headerChars[i]);
             }
 
-            this.getSoketTokensFromWidget(data.donatePayWidgerUrl);
+            this.getSoketTokensFromWidget(data.donatePayWidgetUrl);
 
         }, (error) => {
             console.log(error);

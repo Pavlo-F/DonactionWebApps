@@ -109,7 +109,7 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
                 this.fillRandom();
             }
 
-            this.saveButtonDisabled = data && !data.donatePayWidgerUrl;
+            this.saveButtonDisabled = data && !data.donatePayWidgetUrl;
 
         }, (error) => {
             this.fillRandom();
@@ -117,9 +117,9 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
         });
     }
 
-    onDonatePayWidgerUrlChange() {
-         this.saveButtonDisabled = !this.widgetSettings.donatePayWidgerUrl 
-             || !this.widgetSettings.donatePayWidgerUrl.startsWith('https://');
+    onDonatePayWidgetUrlChange() {
+         this.saveButtonDisabled = !this.widgetSettings.donatePayWidgetUrl 
+             || !this.widgetSettings.donatePayWidgetUrl.startsWith('https://');
 
         this.showSaveMessage = true;
     }
