@@ -1,13 +1,52 @@
 <div class="sea-battle-settings">
     <h2>Настройки виджета</h2>
 
+    <div>
+        <mat-form-field>
+            <mat-label>Количество строк</mat-label>
+            <input matInput intNumber
+                type="number"
+                min="1"
+                max="10"
+                [(ngModel)]="widgetSettings.rows"
+                (ngModelChange)="onRowsChange()">
+        </mat-form-field>
+        <mat-form-field class="colums-input">
+            <mat-label>Количество столбцов</mat-label>
+            <input matInput intNumber
+                type="number"
+                min="1"
+                max="10"
+                [(ngModel)]="widgetSettings.columns"
+                (ngModelChange)="onColumnsChange()">
+        </mat-form-field>
+    </div>
     <div class="d-flex">
-        <sea-battle 
-            [isEditMode]="true" 
-            [backgroundImage]="widgetSettings.backgroundImage"
-            [battleField]="widgetSettings.fieldData"
-            (onFieldChanged)="onFieldChanged()">
-        </sea-battle>
+        <div>
+            <sea-battle 
+                [isEditMode]="true" 
+                [backgroundImage]="widgetSettings.backgroundImage"
+                [battleField]="widgetSettings.fieldData"
+                (onFieldChanged)="onFieldChanged()">
+            </sea-battle>
+            <div class="d-flex buttons-width">
+                <div class="file-uploader">
+                    <span>Картинка заднего плана</span>
+                    <file-upload accept="image/png, image/jpeg" (load)="backgroundLoaded($event)"></file-upload>
+                </div>
+                <div class="resort-button">
+                    <button mat-raised-button color="primary" (click)="removeBackground()">
+                        Удалить картинку
+                    </button>
+                </div>
+                <div class="resort-button">
+                    <button mat-raised-button color="primary" (click)="resort()">
+                        Перемешать
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="donate-settings">
             <div>
                 <div class="donate-settings__label">О виджете</div>
@@ -24,7 +63,7 @@
                 <h4 class="donate-settings__label">Инструкция</h4>
                 <div>
                     <ol>
-                        <li>Указать ссылку на виджет DonatePay, чтобы срабатывали донаты</li>
+                        <li>Указать ссылку на виджет DonatePay или DonationAlerts, чтобы срабатывали донаты</li>
                         <li>Настроить клетки</li>
                         <li>Сохранить настройки</li>
                         <li>Открыть <a [href]="widgetHref" target="_blank">виджет</a> на новой вкладке </li>
@@ -39,12 +78,39 @@
             </div>
             <div>
                 <h4 class="donate-settings__label">Настройка интеграции с донатами</h4>
-                <div>Ссылка на виджет DonatePay:
-                    <input id="donatePayWidgetUrl" type="text" 
-                    [(ngModel)]="widgetSettings.donatePayWidgetUrl" 
-                    (ngModelChange)="onDonatePayWidgetUrlChange()">
-                    <a class="donate-settings__ref" href="https://donatepay.ru/donation/notifications" target="_blank">Находится по этой ссылке https://donatepay.ru/donation/notifications</a>
-                </div>
+
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        DonatePay
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+                        <div>Ссылка на виджет DonatePay:
+                            <input id="donatePayWidgetUrl" type="text" 
+                            [(ngModel)]="widgetSettings.donatePayWidgetUrl" 
+                            (ngModelChange)="onDonatePayWidgetUrlChange()">
+                            <a class="donate-settings__ref" href="https://donatepay.ru/donation/notifications" target="_blank">Находится по этой ссылке https://donatepay.ru/donation/notifications</a>
+                        </div>
+                  </mat-expansion-panel>
+
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        DonationAlerts
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+                        <div>Ссылка на виджет DonationAlerts:
+                            <input id="donationAlertsWidgetUrl" type="text" 
+                            [(ngModel)]="widgetSettings.donationAlertsWidgetUrl" 
+                            (ngModelChange)="onDonationAlertsWidgetUrlChange()">
+                            <a class="donate-settings__ref" href="https://www.donationalerts.com/dashboard/alert-widget" target="_blank">Находится по этой ссылке https://www.donationalerts.com/dashboard/alert-widget</a>
+                        </div>
+                    </mat-expansion-panel>
+
+
+
+                
+
     
                 <div class="donate-settings__widget">Ссылка на данный виджет:
                     <a class="donate-settings__widget_ref" [href]="widgetHref" target="_blank">{{widgetHref}}</a>
@@ -54,21 +120,8 @@
         </div>
     </div>
 
-    <!-- <button mat-raised-button color="primary" (click)="fillRandom()">
-        Сгенерировать поле
-    </button> -->
-
     <div class="d-flex buttons-width">
-        <div class="file-uploader">
-            <span>Картинка заднего плана</span>
-            <file-upload accept="image/png, image/jpeg" (load)="backgroundLoaded($event)"></file-upload>
-        </div>
-        <div class="resort-button">
-            <button mat-raised-button color="primary" (click)="resort()">
-                Перемешать
-            </button>
-        </div>
-        <div class="resort-button">
+        <div>
             <button mat-raised-button color="primary" (click)="saveSettings()" [disabled]="saveButtonDisabled">
                 Сохранить
             </button>

@@ -15,4 +15,12 @@ export class SeaBattleService {
     public getSettings(widgetCode: string) {
         return this.http.get<WidgetSettings>(`/api/SeaBattleWidget?widgetCode=${widgetCode}`);
     }
+
+    public getDonationAlertsPage(token: string) {
+        const requestOptions: Object = {
+            responseType: 'text'
+        }
+
+        return this.http.get<string>(`/api/donationalerts/getWidgetSource?token=${token}`, requestOptions);
+    }
 }

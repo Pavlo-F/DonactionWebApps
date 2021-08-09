@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { webSocket, WebSocketSubject } from "rxjs/webSocket";
 import { Unit } from '../units/models';
@@ -14,7 +14,7 @@ import { UniteTypes } from '../constants';
     styleUrls: ['./sea-battle.styles.scss'],
 })
 
-export class SeaBattleComponent implements AfterViewInit {
+export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
     @Input() isEditMode: boolean = false;
     @Input() backgroundImage: string = '';
     @Input() battleField: Array<Array<Unit>> = new Array<Array<Unit>>();
@@ -34,6 +34,8 @@ export class SeaBattleComponent implements AfterViewInit {
     private donatpaySocket !: WebSocketSubject<any>;
     private uid: number = 0;
     private widgetCode: string = '';
+    private donationAlertsInterval: any;
+    private prevDonates: Donate[] = [];
 
     constructor(
         private readonly httpClient: HttpClient,
@@ -46,6 +48,25 @@ export class SeaBattleComponent implements AfterViewInit {
         for(let i = 0; i < this.battleCols; i++) {
             this.battleHeader.push(this.headerChars[i]);
         }
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.battleField && !changes.battleField.firstChange) {
+            const field = changes.battleField.currentValue ? changes.battleField.currentValue as Array<Array<Unit>> : [[]];
+
+            this.battleCols = field[0].length;
+            const newbattleHeader = [''];
+
+            for(let i = 0; i < this.battleCols; i++) {
+                newbattleHeader.push(this.headerChars[i]);
+            }
+
+            this.battleHeader = newbattleHeader;
+        }
+    }
+
+    ngOnDestroy(): void {
+        clearInterval(this.donationAlertsInterval);
     }
 
     ngAfterViewInit(): void {
@@ -115,7 +136,7 @@ export class SeaBattleComponent implements AfterViewInit {
         });
     }
 
-    private getSoketTokensFromWidget(widgetUrl: string) {
+    private connectToDonatePayEvents(widgetUrl: string) {
         const splitedUrl = widgetUrl.split('/');
         const widgetToken = splitedUrl[splitedUrl.length - 1];
 
@@ -170,19 +191,18 @@ export class SeaBattleComponent implements AfterViewInit {
                 // this.donatpaySocket.next(msg2);
 
             } else if (data.method === 'message') {
-                //console.log('message: ' + JSON.stringify(data));
-                this.parceAndExecudeDonate(data);
+                const object = JSON.parse(data.body.data.notification.vars);
+                this.parceAndExecudeDonate(new Donate(0, object.name, object.comment));
             }
         }, (error) => {
             console.log(error);
         })
     }
 
-    private parceAndExecudeDonate(data: any) {
+    private parceAndExecudeDonate(data: Donate) {
         try {
-            const object = JSON.parse(data.body.data.notification.vars);
-            const userName = object.name;
-            let comment: string = object.comment;
+            const userName: string = data.name;
+            let comment: string = data.comment;
             if (comment) {
                 comment = comment.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 
@@ -212,7 +232,66 @@ export class SeaBattleComponent implements AfterViewInit {
                 this.battleHeader.push(this.headerChars[i]);
             }
 
-            this.getSoketTokensFromWidget(data.donatePayWidgetUrl);
+            if (data.donatePayWidgetUrl && data.donatePayWidgetUrl.length > 1) {
+                this.connectToDonatePayEvents(data.donatePayWidgetUrl);
+            }
+
+            if (data.donationAlertsWidgetUrl && data.donationAlertsWidgetUrl.length > 1) {
+                this.connectToDonationAlertsEvents(data.donationAlertsWidgetUrl);
+            }
+
+        }, (error) => {
+            console.log(error);
+        });
+    }
+
+    private connectToDonationAlertsEvents(widgetUrl: string) {
+        const parameters = new URLSearchParams(widgetUrl);
+        const token = parameters.get('token');
+
+        if (token) {
+            this.donationAlertsInterval = setInterval(() => {
+                this.getNewEventsFromDonationAlerts(token);
+            }, 5000)
+        }
+    }
+
+    private getNewEventsFromDonationAlerts(token: string) {
+        this.seaBattleService.getDonationAlertsPage(token).subscribe((html) => {
+            var doc = new DOMParser().parseFromString(html, "text/html");
+            var donateBlock = doc.querySelectorAll('.b-last-events-widget__item--inner');
+
+            const donates: Donate[] = [];
+
+            donateBlock.forEach((item) => {
+                const nameNode = item.querySelector('._name');
+                const commentNode = item.querySelector('.message-container, .b-last-events-widget__item--text');
+
+                const comment = commentNode ? commentNode.textContent || '' : '';
+                const name = nameNode ? nameNode.textContent || '' : '';
+                const id = item.parentElement ? Number.parseInt(item.parentElement.getAttribute('data-alert_id') || '0') : 0;
+
+                donates.push(new Donate(id, name, comment.trim()));
+            });
+
+            const newDonates: Donate[] = [];
+
+            if (this.prevDonates.length) {
+                donates.forEach((item) => {
+                    const founded = this.prevDonates.find((x) => x.id === item.id);
+                    if (!founded) {
+                        newDonates.push(item);
+                    }
+                });
+
+                newDonates.forEach((x) => {
+                    this.parceAndExecudeDonate(x);
+                });
+            }
+
+            this.prevDonates = donates;
+
+            console.log('newDonates', newDonates);
 
         }, (error) => {
             console.log(error);
@@ -224,4 +303,16 @@ class DonatePaySocketTokens {
     public time: number = 0;
     public token: string = '';
     public userId: string = '';
+}
+
+class Donate {
+    public id: number;
+    public name: string;
+    public comment: string;
+
+    constructor(id: number,name: string, comment: string) {
+        this.id = id;
+        this.name = name;
+        this.comment = comment;
+    }
 }

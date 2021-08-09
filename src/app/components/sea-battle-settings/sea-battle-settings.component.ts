@@ -44,6 +44,11 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
         );
     }
 
+    removeBackground() {
+        this.widgetSettings.backgroundImage = '';
+        this.checkCanSave();
+    }
+
     fillRandom() {
         for(let i = 0; i < this.widgetSettings.rows; i++) {
             this.widgetSettings.fieldData[i] = [];
@@ -117,15 +122,33 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
         });
     }
 
-    onDonatePayWidgetUrlChange() {
-         this.saveButtonDisabled = !this.widgetSettings.donatePayWidgetUrl 
-             || !this.widgetSettings.donatePayWidgetUrl.startsWith('https://');
+    onRowsChange() {
+        this.changeFieldSize();
+        this.checkCanSave();
+    } 
 
-        this.showSaveMessage = true;
+    onColumnsChange() {
+        this.changeFieldSize();
+        this.checkCanSave();
+    }
+
+    onDonatePayWidgetUrlChange() {
+         this.checkCanSave();
+    }
+
+    onDonationAlertsWidgetUrlChange() {
+        this.checkCanSave();
     }
 
     onFieldChanged() {
-        this.showSaveMessage = true;
+        this.checkCanSave();
+    }
+
+    private checkCanSave() {
+        this.saveButtonDisabled = (!this.widgetSettings.donatePayWidgetUrl && !this.widgetSettings.donationAlertsWidgetUrl)
+        || (!this.widgetSettings.donatePayWidgetUrl.startsWith('https://') && !this.widgetSettings.donationAlertsWidgetUrl.startsWith('https://'));
+
+        this.showSaveMessage = !this.saveButtonDisabled;
     }
 
     private readFile(data: Blob): Promise<string> {
@@ -137,5 +160,24 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
             };
             reader.readAsDataURL(data);
         });
+    }
+
+    private changeFieldSize() {
+        const newfieldData: Array<Array<Unit>> = new Array<Array<Unit>>();
+
+        for(let i = 0; i < this.widgetSettings.rows; i++) {
+            newfieldData[i] = this.widgetSettings.fieldData[i] ? this.widgetSettings.fieldData[i].slice(0, this.widgetSettings.columns) : [];
+
+            for(let j = 0; j < this.widgetSettings.columns; j++) {
+                if (this.widgetSettings.fieldData[i] && this.widgetSettings.fieldData[i][j]) {
+                    newfieldData[i][j] = this.widgetSettings.fieldData[i][j];
+                } else {
+                    newfieldData[i][j] = new Unit(UniteTypes.Text, 50, 'Текст');
+                }
+
+            }
+        }
+
+        this.widgetSettings.fieldData = newfieldData;
     }
 }

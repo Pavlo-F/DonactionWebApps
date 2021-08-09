@@ -16,4 +16,5 @@ export class WidgetSettings {
     public columns: number = 7;
     public rows: number = 7;
     public donatePayWidgetUrl: string = '';
+    public donationAlertsWidgetUrl: string = '';
 }

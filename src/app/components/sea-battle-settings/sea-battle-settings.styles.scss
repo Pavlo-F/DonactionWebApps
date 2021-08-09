@@ -1,4 +1,8 @@
 .sea-battle-settings {
+    .colums-input {
+        margin-left: 20px;
+    }
+
     .buttons-width {
         margin: 5px 0;
         max-width: 530px;
@@ -32,7 +36,7 @@
             }
         }
 
-        #donatePayWidgetUrl {
+        #donatePayWidgetUrl, #donationAlertsWidgetUrl {
             margin: 0 0 0 10px;
             width: 400px;
         }
