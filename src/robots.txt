@@ -1,0 +1,2 @@
+User-agent: *
+Sitemap: https://widgets.donaction.club/sitemap.xml

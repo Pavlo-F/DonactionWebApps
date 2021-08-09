@@ -1,28 +1,27 @@
 <div class="sea-battle-settings">
     <h2>Настройки виджета</h2>
-
-    <div>
-        <mat-form-field>
-            <mat-label>Количество строк</mat-label>
-            <input matInput intNumber
-                type="number"
-                min="1"
-                max="10"
-                [(ngModel)]="widgetSettings.rows"
-                (ngModelChange)="onRowsChange()">
-        </mat-form-field>
-        <mat-form-field class="colums-input">
-            <mat-label>Количество столбцов</mat-label>
-            <input matInput intNumber
-                type="number"
-                min="1"
-                max="10"
-                [(ngModel)]="widgetSettings.columns"
-                (ngModelChange)="onColumnsChange()">
-        </mat-form-field>
-    </div>
     <div class="d-flex">
         <div>
+            <div>
+                <mat-form-field>
+                    <mat-label>Количество строк</mat-label>
+                    <input matInput intNumber
+                        type="number"
+                        min="1"
+                        max="10"
+                        [(ngModel)]="widgetSettings.rows"
+                        (ngModelChange)="onRowsChange()">
+                </mat-form-field>
+                <mat-form-field class="colums-input">
+                    <mat-label>Количество столбцов</mat-label>
+                    <input matInput intNumber
+                        type="number"
+                        min="1"
+                        max="10"
+                        [(ngModel)]="widgetSettings.columns"
+                        (ngModelChange)="onColumnsChange()">
+                </mat-form-field>
+            </div>
             <sea-battle 
                 [isEditMode]="true" 
                 [backgroundImage]="widgetSettings.backgroundImage"
