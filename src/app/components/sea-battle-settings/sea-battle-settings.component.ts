@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { SeaBattleService } from '../../services/sea-battle.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MessageBoxDialog } from '../../helpers/message-box/message-box.component';
+import { Utils } from '../../helpers/common';
 
 @Component({
     selector: 'sea-battle-settings',
@@ -33,7 +34,7 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
     }
 
     backgroundLoaded(file: any) {
-        this.readFile(file).then(
+        Utils.readImageFile(file).then(
             (data) => {
                 this.widgetSettings.backgroundImage = data
                 this.showSaveMessage = true;
@@ -58,7 +59,8 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
                 const unit = new Unit(UniteTypes.Text, 50, 'Текст');
 
                 if (rand > 0.5 && rand <= 0.8) {
-                    unit.type = UniteTypes.ReduceTime;
+                    unit.type = UniteTypes.Image;
+                    unit.value = null;
                 } else if (rand > 0.8) {
                     unit.type = UniteTypes.IncreaseTime;
                 }
@@ -149,17 +151,6 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
         || (!this.widgetSettings.donatePayWidgetUrl.startsWith('https://') && !this.widgetSettings.donationAlertsWidgetUrl.startsWith('https://'));
 
         this.showSaveMessage = !this.saveButtonDisabled;
-    }
-
-    private readFile(data: Blob): Promise<string> {
-        const reader = new FileReader();
-
-        return new Promise((resolve) => {
-            reader.onloadend = () => {
-                resolve(reader.result as string);
-            };
-            reader.readAsDataURL(data);
-        });
     }
 
     private changeFieldSize() {

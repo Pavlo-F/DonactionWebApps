@@ -1,0 +1,4 @@
+<div class="picture">
+    <div *ngIf="unitValue && unitValue.startsWith('data:image')" [style.background-image]="'url(' + unitValue + ')'" class="picture__skin"></div>
+    <img *ngIf="!unitValue || !unitValue.startsWith('data:image')" src="/assets/icons/picture.svg">
+</div>

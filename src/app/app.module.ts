@@ -7,6 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BombComponent,
   ChooseUnitDialog,
+  ImageComponent,
   IncreaseTimeComponent, 
   ReduceTimeComponent, 
   SeaBattleComponent, 
@@ -26,6 +27,7 @@ import { DndDirective } from './helpers/file-upload/dnd.directive';
 import { SanitizeUrlPipe } from './helpers/sanitize-url/sanitize-url.pipe';
 import { CustomHttpInterceptor } from './services/custom.interceptor';
 import { IntNumberDirective } from './directives';
+import { ImageMessageBoxDialog } from './helpers/image-message-box/image-message-box.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +40,7 @@ import { IntNumberDirective } from './directives';
     UnitContainerComponent,
     ReduceTimeComponent,
     TextComponent,
+    ImageComponent,
 
     SanitizeUrlPipe,
     DndDirective,
@@ -45,6 +48,7 @@ import { IntNumberDirective } from './directives';
 
     MessageBoxDialog,
     ChooseUnitDialog,
+    ImageMessageBoxDialog,
 
     IntNumberDirective,
   ],
@@ -62,6 +66,7 @@ import { IntNumberDirective } from './directives';
   entryComponents: [
     MessageBoxDialog,
     ChooseUnitDialog,
+    ImageMessageBoxDialog,
   ],
   providers: [
     {

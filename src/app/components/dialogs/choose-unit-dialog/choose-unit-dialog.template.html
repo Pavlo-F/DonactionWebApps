@@ -3,7 +3,7 @@
     <mat-dialog-content>
         <div class="d-flex all-items">
             <div class="item-container" (click)="chooseItem('IncreaseTime')">
-                <span>Увеличить время</span>
+                <div class="unit-title">Увеличить время</div>
                 <unit-container
                     [ngClass]="{'selected-item': unit.type === 'IncreaseTime'}"
                     [unitType]="'IncreaseTime'" 
@@ -13,7 +13,7 @@
             </div>
 
             <div class="item-container" (click)="chooseItem('ReduceTime')">
-                <span>Уменьшить время</span>
+                <div class="unit-title">Уменьшить время</div>
                 <unit-container
                     [ngClass]="{'selected-item': unit.type === 'ReduceTime'}"
                     [unitType]="'ReduceTime'" 
@@ -23,7 +23,7 @@
             </div>
 
             <div class="item-container" (click)="chooseItem('Text')">
-                <span>Любой текст</span>
+                <div class="unit-title">Любой текст</div>
                 <unit-container
                     [ngClass]="{'selected-item': unit.type === 'Text'}"
                     [unitType]="'Text'" 
@@ -33,7 +33,7 @@
             </div>
 
             <div class="item-container" (click)="chooseItem('')">
-                <span>Пустой элемент</span>
+                <div class="unit-title">Пустой элемент</div>
                 <unit-container
                     [ngClass]="{'selected-item': unit.type === ''}"
                     [unitType]="''"
@@ -41,16 +41,33 @@
                     [isEdit]="true">
                 </unit-container>
             </div>
+
+            <div class="item-container" (click)="chooseItem('Image')">
+                <div class="unit-title">Картинка</div>
+                <unit-container
+                    [ngClass]="{'selected-item': unit.type === 'Image'}"
+                    [unitType]="'Image'"
+                    [unitValue]="unit.value"
+                    [isEdit]="true">
+                </unit-container>
+            </div>
         </div>
 
         <div *ngIf="unit.type === 'Text'">
-            <span>Вставьте в текст <b>(username)</b> и оно заменится на имя задонатившего при показе сообщения</span>
-            <textarea
-                matInput
-                [(ngModel)]="unit.value"
-                rows="3"
-                type="text">
-          </textarea>
+            <mat-form-field class="full-width">
+                <span>Вставьте в текст <b>(username)</b> и оно заменится на имя задонатившего при показе сообщения</span>
+                <textarea
+                    matInput
+                    [(ngModel)]="unit.value"
+                    rows="3"
+                    type="text">
+                </textarea>
+            </mat-form-field>
+        </div>
+
+        <div class="file-uploader" *ngIf="unit.type === 'Image'">
+            <span>Выберите картинку размером не более 100 КБ.</span>
+            <file-upload accept="image/png, image/jpeg" (load)="unitImageLoaded($event)"></file-upload>
         </div>
     </mat-dialog-content>
     <mat-dialog-actions class="actions-block">

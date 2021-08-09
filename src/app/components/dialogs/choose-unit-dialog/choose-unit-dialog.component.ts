@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Utils } from '../../../helpers/common';
 import { Unit } from '../../units/models';
 
 export interface ChooseUnitDialogData {
@@ -28,5 +29,20 @@ export class ChooseUnitDialog {
 
     chooseItem(unitType: string) {
         this.unit.type = unitType;
+    }
+
+    unitImageLoaded(file: File) {
+        if (file.size > 102400) { // 100 KB
+            return;
+        } 
+
+        Utils.readImageFile(file).then(
+            (data) => {
+                this.unit.value = data
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
     }
 }

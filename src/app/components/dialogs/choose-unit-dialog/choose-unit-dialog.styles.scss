@@ -19,19 +19,33 @@
         }
     }
 
+    .unit-title {
+        height: 40px;
+        display: flex;
+        align-items: center;
+    }
+
     .actions-block {
         justify-content: end;
         margin-top: 20px;
     }
 
-    textarea {
+    .full-width {
         margin-top: 10px;
         width: 100%;
+    }
+
+    textarea {
+        margin-top: 10px;
         resize: none;
-        font-family: inherit;
     }
 
     unit-container {
         border: 1px solid;
+    }
+
+    .file-uploader {
+        margin-top: 30px;
+        text-align: center;
     }
 }

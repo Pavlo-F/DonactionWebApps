@@ -7,5 +7,6 @@ export * from './units/unit-container.component';
 export * from './units/increaseTime/increase-time.component';
 export * from './units/reduceTime/reduce-time.component';
 export * from './units/text/text.component';
+export * from './units/image/image.component';
 
 export * from './constants';

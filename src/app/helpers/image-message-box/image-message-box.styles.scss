@@ -1,0 +1,12 @@
+.message-box {
+    max-width: 90vw !important;
+    max-height: 90vw !important;
+    overflow-wrap: break-word;
+
+    &__picture {
+        width: 77vw;
+        height: 80vh;
+        background: url('/assets/icons/picture.svg') no-repeat;
+        background-size: 100% 100%;
+    }
+}
