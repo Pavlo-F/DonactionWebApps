@@ -34,7 +34,11 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
         this.loadSettings();
     }
 
-    backgroundLoaded(file: any) {
+    backgroundLoaded(file: File) {
+        if (file.size > 1048576) {
+            return;
+        }
+
         Utils.readImageFile(file).then(
             (data) => {
                 this.widgetSettings.backgroundImage = data
