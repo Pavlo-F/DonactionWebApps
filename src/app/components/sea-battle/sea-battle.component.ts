@@ -8,6 +8,7 @@ import { SeaBattleService } from '../../services/sea-battle.service';
 import { ActivatedRoute } from '@angular/router';
 import { UniteTypes } from '../constants';
 import { MessageBoxDialog } from '../../helpers/message-box/message-box.component';
+import { Socket } from 'ngx-socket-io';
 
 @Component({
     selector: 'sea-battle',
@@ -41,6 +42,7 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
         private readonly httpClient: HttpClient,
         private route: ActivatedRoute,
         private seaBattleService: SeaBattleService,
+        private socket: Socket,
         private readonly dialog: MatDialog) {
         this.headerChars = this.arrRu;
         this.widgetCode = this.route.snapshot.queryParams.widgetCode;
@@ -256,55 +258,12 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
     private connectToDonationAlertsEvents(widgetUrl: string) {
         const parameters = new URLSearchParams(widgetUrl);
         const token = parameters.get('token');
-
-        if (token) {
-            this.donationAlertsInterval = setInterval(() => {
-                this.getNewEventsFromDonationAlerts(token);
-            }, 10000)
-        }
-    }
-
-    private getNewEventsFromDonationAlerts(token: string) {
-        this.seaBattleService.getDonationAlertsPage(token).subscribe((html) => {
-            var doc = new DOMParser().parseFromString(html, "text/html");
-            var donateBlock = doc.querySelectorAll('.b-last-events-widget__item--inner');
-
-            const donates: Donate[] = [];
-
-            donateBlock.forEach((item) => {
-                const nameNode = item.querySelector('._name');
-                const commentNode = item.querySelector('.message-container, .b-last-events-widget__item--text');
-                const sumNode = item.querySelector('._sum');
-
-                const comment = commentNode ? commentNode.textContent || '' : '';
-                const name = nameNode ? nameNode.textContent || '' : '';
-                const id = item.parentElement ? Number.parseInt(item.parentElement.getAttribute('data-alert_id') || '0') : 0;
-                let sumStr = sumNode ? sumNode.textContent || '0' : '0';
-
-                const sum = Number.parseFloat(sumStr);
-
-                donates.push(new Donate(id, name, comment.trim(), sum));
-            });
-
-            const newDonates: Donate[] = [];
-
-            if (this.prevDonates.length) {
-                donates.forEach((item) => {
-                    const founded = this.prevDonates.find((x) => x.id === item.id);
-                    if (!founded) {
-                        newDonates.push(item);
-                    }
-                });
-
-                newDonates.forEach((x) => {
-                    this.parceAndExecudeDonate(x);
-                });
-            }
-
-            this.prevDonates = donates;
-
-            console.log('newDonates', newDonates);
-
+        
+        this.socket.emit('add-user', { token: token, type: 'alert_widget' });
+        this.socket.fromEvent('donation').subscribe((data: any) => {
+            const msg = JSON.parse(data);
+            const donate = new Donate(msg.id, msg.username, msg.message, Number.parseFloat(msg.amount));
+            this.parceAndExecudeDonate(donate);
         }, (error) => {
             console.log(error);
         });

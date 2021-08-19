@@ -15,6 +15,8 @@ import { BombComponent,
   TextComponent, 
   UnitContainerComponent } from './components';
 
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -29,6 +31,8 @@ import { SanitizeUrlPipe } from './helpers/sanitize-url/sanitize-url.pipe';
 import { CustomHttpInterceptor } from './services/custom.interceptor';
 import { IntNumberDirective } from './directives';
 import { ImageMessageBoxDialog } from './helpers/image-message-box/image-message-box.component';
+
+const config: SocketIoConfig = { url: 'wss://socket.donationalerts.ru', options: {} };
 
 @NgModule({
   declarations: [
@@ -64,6 +68,8 @@ import { ImageMessageBoxDialog } from './helpers/image-message-box/image-message
     MatExpansionModule,
     MatInputModule,
     MatProgressSpinnerModule,
+
+    SocketIoModule.forRoot(config),
   ],
   entryComponents: [
     MessageBoxDialog,
