@@ -18,6 +18,7 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
     public saveButtonDisabled: boolean = true;
     public showSaveMessage: boolean = false;
     public widgetHref: string = '';
+    public isSaving: boolean = false;
 
     private widgetCode: string = '';
     
@@ -56,7 +57,7 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
 
             for(let j = 0; j < this.widgetSettings.columns; j++) {
                 const rand = Math.random();
-                const unit = new Unit(UniteTypes.Text, 50, 'Текст');
+                const unit = new Unit(UniteTypes.Text, this.widgetSettings.minHealth, 'Текст');
 
                 if (rand > 0.5 && rand <= 0.8) {
                     unit.type = UniteTypes.Image;
@@ -88,11 +89,16 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
     }
 
     saveSettings() {
+        this.isSaving = true;
+        this.applyMinHealth();
+
         this.saveButtonDisabled = true;
         this.seaBattleService.saveSettings(this.widgetSettings, this.widgetCode).subscribe((data) => {
             this.saveButtonDisabled = false;
             this.showSaveMessage = false;
+            this.isSaving = false;
         }, (error) => {
+            this.isSaving = false;
             this.saveButtonDisabled = false;
             this.showSaveMessage = false;
             console.log(error);
@@ -119,7 +125,15 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
             this.saveButtonDisabled = data && !data.donatePayWidgetUrl;
 
         }, (error) => {
-            this.fillRandom();
+            const ref = this.messageBox.open(MessageBoxDialog, {
+                width: '600px',
+                data: {
+                    header: 'Ошибка',
+                    message: 'Не удалось загрузить настройки. Перезагрузите страницу.',
+                    withButtons: true,
+                },
+            });
+
             console.log(error);
         });
     }
@@ -146,6 +160,18 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
         this.checkCanSave();
     }
 
+    onMinHealthChange() {
+        this.checkCanSave();
+    }
+
+    private applyMinHealth() {
+        this.widgetSettings.fieldData.forEach((row) => {
+            row.forEach((col) => {
+                col.health = this.widgetSettings.minHealth;
+            });
+        });
+    }
+
     private checkCanSave() {
         this.saveButtonDisabled = (!this.widgetSettings.donatePayWidgetUrl && !this.widgetSettings.donationAlertsWidgetUrl)
         || (!this.widgetSettings.donatePayWidgetUrl.startsWith('https://') && !this.widgetSettings.donationAlertsWidgetUrl.startsWith('https://'));
@@ -163,7 +189,7 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
                 if (this.widgetSettings.fieldData[i] && this.widgetSettings.fieldData[i][j]) {
                     newfieldData[i][j] = this.widgetSettings.fieldData[i][j];
                 } else {
-                    newfieldData[i][j] = new Unit(UniteTypes.Text, 50, 'Текст');
+                    newfieldData[i][j] = new Unit(UniteTypes.Text, this.widgetSettings.minHealth, 'Текст');
                 }
 
             }

@@ -19,6 +19,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { MainPageComponent } from './pages';
 import { MessageBoxDialog } from './helpers/message-box/message-box.component';
@@ -62,6 +63,7 @@ import { ImageMessageBoxDialog } from './helpers/image-message-box/image-message
     MatButtonModule,
     MatExpansionModule,
     MatInputModule,
+    MatProgressSpinnerModule,
   ],
   entryComponents: [
     MessageBoxDialog,

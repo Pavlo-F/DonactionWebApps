@@ -3,7 +3,7 @@
     <div class="d-flex">
         <div>
             <div>
-                <mat-form-field>
+                <mat-form-field class="input-width">
                     <mat-label>Количество строк</mat-label>
                     <input matInput intNumber
                         type="number"
@@ -12,7 +12,7 @@
                         [(ngModel)]="widgetSettings.rows"
                         (ngModelChange)="onRowsChange()">
                 </mat-form-field>
-                <mat-form-field class="colums-input">
+                <mat-form-field class="colums-input input-width">
                     <mat-label>Количество столбцов</mat-label>
                     <input matInput intNumber
                         type="number"
@@ -20,6 +20,17 @@
                         max="10"
                         [(ngModel)]="widgetSettings.columns"
                         (ngModelChange)="onColumnsChange()">
+                </mat-form-field>
+                <mat-form-field class="colums-input input-width"
+                    title="При срабатывании у клетки будет отниматься HP на сумму доната. Таким образом несколькими донатами можно открыть клетку."
+                >
+                    <mat-label>HP каждой клетки</mat-label>
+                    <input matInput intNumber
+                        type="number"
+                        min="0"
+                        max="99999"
+                        [(ngModel)]="widgetSettings.minHealth"
+                        (ngModelChange)="onMinHealthChange()">
                 </mat-form-field>
             </div>
             <sea-battle 
@@ -105,12 +116,6 @@
                             <a class="donate-settings__ref" href="https://www.donationalerts.com/dashboard/alert-widget" target="_blank">Находится по этой ссылке https://www.donationalerts.com/dashboard/alert-widget</a>
                         </div>
                     </mat-expansion-panel>
-
-
-
-                
-
-    
                 <div class="donate-settings__widget">Ссылка на данный виджет:
                     <a class="donate-settings__widget_ref" [href]="widgetHref" target="_blank">{{widgetHref}}</a>
                 </div>
@@ -125,6 +130,7 @@
                 Сохранить
             </button>
         </div>
+        <mat-spinner *ngIf="isSaving" [diameter]="35"></mat-spinner>
     </div>
 
     <div class="save-message" *ngIf="showSaveMessage && !saveButtonDisabled">Сохраните изменения и обновите открытый виджет (OBS, браузер)</div>

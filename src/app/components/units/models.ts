@@ -17,4 +17,5 @@ export class WidgetSettings {
     public rows: number = 7;
     public donatePayWidgetUrl: string = '';
     public donationAlertsWidgetUrl: string = '';
+    public minHealth: number = 50;
 }

@@ -7,6 +7,7 @@ import { ChooseUnitDialog } from '../dialogs/choose-unit-dialog/choose-unit-dial
 import { SeaBattleService } from '../../services/sea-battle.service';
 import { ActivatedRoute } from '@angular/router';
 import { UniteTypes } from '../constants';
+import { MessageBoxDialog } from '../../helpers/message-box/message-box.component';
 
 @Component({
     selector: 'sea-battle',
@@ -25,7 +26,6 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
     public coords: string = '';
 
     public battleHeader: string[] = [' '];
-    public damage: number = 100;
 
     private arrEn = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
     private arrRu = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ж', 'З', 'И', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Э'];
@@ -79,11 +79,11 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
 
     onClickCell(cell: Unit) {
         if (cell.health > 0) {
-            cell.health = cell.health - this.damage;
+            cell.health = -1;
         }
     }
 
-    onDamage(coords: string, userName: string) {
+    onDamage(coords: string, userName: string, damageValue: number) {
         const value = coords.toUpperCase();
 
         let char = 'а';
@@ -110,7 +110,7 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
                 if (cell.type === UniteTypes.Text) {
                     cell.value = (cell.value as string).replace('(username)', userName);
                 }
-                cell.health = cell.health - this.damage;
+                cell.health = cell.health - damageValue;
             }
         }
     }
@@ -192,11 +192,11 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
 
             } else if (data.method === 'message') {
                 const object = JSON.parse(data.body.data.notification.vars);
-                this.parceAndExecudeDonate(new Donate(0, object.name, object.comment));
+                this.parceAndExecudeDonate(new Donate(0, object.name, object.comment, Number.parseFloat(object.sum)));
             }
         }, (error) => {
             console.log(error);
-        })
+        });
     }
 
     private parceAndExecudeDonate(data: Donate) {
@@ -212,7 +212,7 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
                 if (coordsMatch) {
                     coords = coordsMatch[1].replace(' ', '');
     
-                    this.onDamage(coords, userName);
+                    this.onDamage(coords, userName, data.sum);
                 }
             }
         } catch (error) {
@@ -241,6 +241,14 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
             }
 
         }, (error) => {
+            const ref = this.dialog.open(MessageBoxDialog, {
+                width: '600px',
+                data: {
+                    header: 'Ошибка',
+                    message: 'Не удалось загрузить настройки. Перезагрузите страницу.',
+                    withButtons: true,
+                },
+            });
             console.log(error);
         });
     }
@@ -252,7 +260,7 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
         if (token) {
             this.donationAlertsInterval = setInterval(() => {
                 this.getNewEventsFromDonationAlerts(token);
-            }, 5000)
+            }, 10000)
         }
     }
 
@@ -266,12 +274,16 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
             donateBlock.forEach((item) => {
                 const nameNode = item.querySelector('._name');
                 const commentNode = item.querySelector('.message-container, .b-last-events-widget__item--text');
+                const sumNode = item.querySelector('._sum');
 
                 const comment = commentNode ? commentNode.textContent || '' : '';
                 const name = nameNode ? nameNode.textContent || '' : '';
                 const id = item.parentElement ? Number.parseInt(item.parentElement.getAttribute('data-alert_id') || '0') : 0;
+                let sumStr = sumNode ? sumNode.textContent || '0' : '0';
 
-                donates.push(new Donate(id, name, comment.trim()));
+                const sum = Number.parseFloat(sumStr);
+
+                donates.push(new Donate(id, name, comment.trim(), sum));
             });
 
             const newDonates: Donate[] = [];
@@ -309,10 +321,12 @@ class Donate {
     public id: number;
     public name: string;
     public comment: string;
+    public sum: number;
 
-    constructor(id: number,name: string, comment: string) {
+    constructor(id: number,name: string, comment: string, sum: number) {
         this.id = id;
         this.name = name;
         this.comment = comment;
+        this.sum = sum;
     }
 }

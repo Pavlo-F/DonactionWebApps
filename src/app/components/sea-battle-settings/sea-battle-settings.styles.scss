@@ -3,6 +3,10 @@
         margin-left: 20px;
     }
 
+    .input-width {
+        width: 125px;
+    }
+
     .buttons-width {
         margin: 5px 0;
         max-width: 530px;
@@ -44,5 +48,10 @@
 
     .save-message {
         color: rgb(139, 0, 0);
+    }
+
+    .save-spinner {
+        width: 38px;
+        height: 38px;
     }
 }
