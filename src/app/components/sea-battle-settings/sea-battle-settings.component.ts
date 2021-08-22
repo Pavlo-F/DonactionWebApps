@@ -133,7 +133,7 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
                 width: '600px',
                 data: {
                     header: 'Ошибка',
-                    message: 'Не удалось загрузить настройки. Перезагрузите страницу.',
+                    message: `Не удалось загрузить настройки. Перезагрузите страницу. ${error.error}`,
                     withButtons: true,
                 },
             });

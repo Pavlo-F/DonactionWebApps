@@ -36,7 +36,7 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
     private uid: number = 0;
     private widgetCode: string = '';
     private donationAlertsInterval: any;
-    private prevDonates: Donate[] = [];
+    private delayDamage: number = 3000;
 
     constructor(
         private readonly httpClient: HttpClient,
@@ -193,8 +193,10 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
                 // this.donatpaySocket.next(msg2);
 
             } else if (data.method === 'message') {
+                setTimeout(() => { // подождать чтобы сначала открылся виджет оповещения 
                 const object = JSON.parse(data.body.data.notification.vars);
                 this.parceAndExecudeDonate(new Donate(0, object.name, object.comment, Number.parseFloat(object.sum)));
+                }, this.delayDamage);
             }
         }, (error) => {
             console.log(error);
@@ -208,7 +210,7 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
             if (comment) {
                 comment = comment.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 
-                const coordsMatch = comment.match(/[<({\"](.+?)[\"})>]/);
+                const coordsMatch = comment.match(/[<({\"«'](.+?)['»\"})>]/);
                 let coords = '';
     
                 if (coordsMatch) {
@@ -261,9 +263,11 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
         
         this.socket.emit('add-user', { token: token, type: 'alert_widget' });
         this.socket.fromEvent('donation').subscribe((data: any) => {
-            const msg = JSON.parse(data);
-            const donate = new Donate(msg.id, msg.username, msg.message, Number.parseFloat(msg.amount));
-            this.parceAndExecudeDonate(donate);
+            setTimeout(() => { // подождать чтобы сначала открылся виджет оповещения 
+                const msg = JSON.parse(data);
+                const donate = new Donate(msg.id, msg.username, msg.message, Number.parseFloat(msg.amount));
+                this.parceAndExecudeDonate(donate);
+            }, this.delayDamage);
         }, (error) => {
             console.log(error);
         });
