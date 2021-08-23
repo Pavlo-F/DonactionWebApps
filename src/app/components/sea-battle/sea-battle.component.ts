@@ -38,6 +38,8 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
     private donationAlertsInterval: any;
     private delayDamage: number = 3000;
 
+    private currencies: Map<string, number> = new Map<string, number>();
+
     constructor(
         private readonly httpClient: HttpClient,
         private route: ActivatedRoute,
@@ -50,6 +52,10 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
         for(let i = 0; i < this.battleCols; i++) {
             this.battleHeader.push(this.headerChars[i]);
         }
+
+        this.currencies.set('RUB', 1);
+        this.currencies.set('EUR', 86);
+        this.currencies.set('USD', 72);
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -265,12 +271,24 @@ export class SeaBattleComponent implements AfterViewInit, OnDestroy, OnChanges {
         this.socket.fromEvent('donation').subscribe((data: any) => {
             setTimeout(() => { // подождать чтобы сначала открылся виджет оповещения 
                 const msg = JSON.parse(data);
-                const donate = new Donate(msg.id, msg.username, msg.message, Number.parseFloat(msg.amount));
+                const currency = this.getCurrencyValue(msg.currency);
+                const donate = new Donate(msg.id, msg.username, msg.message, Number.parseFloat(msg.amount) * currency);
                 this.parceAndExecudeDonate(donate);
             }, this.delayDamage);
         }, (error) => {
             console.log(error);
         });
+    }
+
+    getCurrencyValue(cur: string) {
+        const currency = cur.toUpperCase();
+        let result = this.currencies.get(currency);
+
+        if (!result) {
+            result = 1;
+        }
+
+        return result;
     }
 }
 

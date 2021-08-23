@@ -1,2 +1,5 @@
 User-agent: *
 Sitemap: https://widgets.donaction.club/sitemap.xml
+
+User-agent: *
+Disallow: /sea-battle
