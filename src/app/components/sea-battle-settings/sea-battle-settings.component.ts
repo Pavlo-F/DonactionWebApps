@@ -122,7 +122,8 @@ export class SeaBattleSettingsComponent implements AfterViewInit {
         this.seaBattleService.getSettings(this.widgetCode).subscribe((data) => {
             this.widgetSettings = data;
 
-            if (!data || data.fieldData.length < 1) {
+            if (!data || !data.fieldData || !data.fieldData.length) {
+                this.widgetSettings = new WidgetSettings();
                 this.fillRandom();
             }
 
